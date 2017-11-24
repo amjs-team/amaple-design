@@ -1,0 +1,81 @@
+<Module :title="表格">
+	
+	<!-- 模块页面模板 -->
+	<template>
+		<div>
+			<edit-table title="{{ title }}" content="{{ content }}"></edit-table>
+		</div>
+		<div>
+			<a href="/login/aa?a=1&b899=2">{{ btn }}{{ postData }}</a>
+			<button :onclick="changeData">Change</button>
+			<a href="/forget_pwd">{{ btn }}_404</a>
+			<input type="checkbox" :model="title" value="NO."><label>NO.</label>
+		</div>
+	</template>
+	
+
+	<!-- 此模板对应的数据 -->
+	<script>
+		var EditTable = import ( "/component/EditTable" );
+
+		var table = new ice.Module ( {
+			init : function () {
+
+				return {
+					// 绑定变量与绑定函数直接写返回对象内
+					title: ["NO.", "UserName", "Avatar", "Age", "Address"],
+					content: [
+						["1", "Tom", "img/a1.png", "24", "LongHu street"],
+						["2", "Sam", "img/a2.png", "23", "LongHu street"],
+						["3", "Ann", "img/a3.png", "25", "LongHu street"],
+						["4", "Jane", "img/a4.png", "22", "LongHu street"],
+						["5", "Leo", "img/a5.png", "26", "LongHu street"]
+					],
+					pageCtrl: {
+						reqPath 	: "data/user_info",
+						currentPage : 1,
+						pageCount 	: 10,
+						current 	: "current"
+					},
+					btn: "Button",
+					postData: "",
+					show: 1,
+
+	                changeData : function () {
+	                	// this.title.shift ();
+	                	// this.title.unshift ( "666" );
+	                	// this.show ++;
+	                	this.content.reverse ();
+	                }
+				};
+			},
+
+			unmount : function () {
+				console.log( "table unmount" );
+			},
+
+			apply : function () {
+				this.state.postData = JSON.stringify ( this.post );
+			}
+		} );
+	</script>
+	
+
+	<!-- 此模板对应的样式 -->
+	<style scoped>
+		a {
+			color: gray;
+			font-size: 20px;
+			margin: 0 20px;
+		}
+		.abc {
+			background: red;
+		}
+		#a87 {
+			background: green;
+		}
+		#a87 li {
+			border: solid 1px #888;
+		}
+	</style>
+</Module>
