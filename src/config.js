@@ -1,6 +1,6 @@
 ice.startRouter ( {
 	// history : ice.BROWSER,
-	history : ice.HASH,
+	// history : ice.HASH,
 	baseURL : "module",
 	routes : function ( router ) {
 		router.module ()
@@ -11,6 +11,7 @@ ice.startRouter ( {
 		.route ( "/forget_pwd", "login/forget_pwd" )
 		.route ( "/error404", "error/404" );
 
+		
 		router.module ( "tips" )
 		.route ( [ "/", "/table" ], "index/sera" );
 

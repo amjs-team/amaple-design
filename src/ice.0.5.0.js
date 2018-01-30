@@ -4033,11 +4033,11 @@ extend(VNode.prototype, {
                 break;
         }
 
-        if ( type$1 ( this.node ) === "array" ) {
-            f = document.createDocumentFragment ();
-            foreach ( this.node, node => {
-                f.appendChild ( node );
-            } );
+        if (type$1(this.node) === "array") {
+            f = document.createDocumentFragment();
+            foreach(this.node, function (node) {
+                f.appendChild(node);
+            });
 
             return f;
         }
@@ -4760,7 +4760,7 @@ extend(Component.prototype, {
         // 验证组件类
         this.depComponents = this.depComponents || [];
         foreach(this.depComponents, function (comp) {
-            if (comp && getFunctionName(comp.constructor) !== "Component") {
+            if (comp && getFunctionName(comp.__proto__) !== "Component") {
                 throw componentErr("depComponents", "\u7EC4\u4EF6\"" + getFunctionName(_this.constructor) + "\"\u5185\u9519\u8BEF\u7684\u4F9D\u8D56\u7EC4\u4EF6\u5BF9\u8C61\uFF0C\u8BF7\u786E\u4FDD\u4F9D\u8D56\u7EC4\u4EF6\u4E3A\u4E00\u4E2A\u7EC4\u4EF6\u884D\u751F\u7C7B");
             }
         });
@@ -5760,19 +5760,21 @@ var textExpr = {
         http://icejs.org/######
     */
     before: function before() {
+        var rexpr = /{{\s*(.*?)\s*}}/g;
 
         // 当表达式只有“{{ expr }}”时直接取出表达式的值
         if (/^{{\s*(\S+)\s*}}$/.test(this.expr)) {
-            this.expr = this.expr.replace(/{{\s*(.*?)\s*}}/g, function (match, rep) {
+            this.expr = this.expr.replace(rexpr, function (match, rep) {
                 return rep;
             });
         } else {
 
             // 当表达式为混合表达式时，将表达式转换为字符串拼接代码
             // 拼接前先过滤换行符为空格，防止解析出错
-            this.expr = this.expr.replace(/[\r\n]/g, " ").replace(/{{\s*(.*?)\s*}}/g, function (match, rep) {
+            this.expr = this.expr.replace(/[\r\n]/g, " ").replace(rexpr, function (match, rep) {
                 return "\" + " + rep + " + \"";
             });
+
             this.expr = "\"" + this.expr + "\"";
         }
     },
@@ -6937,6 +6939,7 @@ function compileModule(moduleString, identifier) {
 
 	// 模块编译正则表达式
 	var rmodule = /^<Module[\s\S]+<\/Module>/;
+	var title = "";
 	if (rmodule.test(moduleString)) {
 
 		var parses = {},
@@ -6948,6 +6951,7 @@ function compileModule(moduleString, identifier) {
 
 		// 解析模板
 		moduleString = parseTemplate(moduleString, parses);
+		title = parses.attrs[iceAttr.title] || "";
 
 		// 解析样式
 		moduleString = parseStyle(moduleString, identifier, parses);
@@ -6962,23 +6966,24 @@ function compileModule(moduleString, identifier) {
 
 		check(parses.script).notBe("").ifNot("module:script", "<Module>内的<script>为必须子元素，它的内部js代码用于初始化模块的页面布局").do();
 
-		var buildView = "signCurrentRender();var nt=new NodeTransaction().start();nt.collect(moduleNode);moduleNode.html(VNode.domToVNode(view));";
+		var buildView = "signCurrentRender();var nt=new NodeTransaction();nt.collect(moduleNode);moduleNode.html(VNode.domToVNode(view));";
 
 		////////////////////////////////////////////////////////
 		////////////////////////////////////////////////////////
 		/// 构造编译函数
-		moduleString = "var title=\"" + (parses.attrs[iceAttr.title] || "") + "\",view=\"" + parses.view + parses.style + "\";";
+		moduleString = "var view=\"" + parses.view + parses.style + "\";";
 
 		if (!isEmpty(scriptPaths)) {
-			moduleString += "require([" + scriptPaths.join(",") + "],function(){" + buildView + parses.script + ";nt.commit();});";
+			moduleString += "require([" + scriptPaths.join(",") + "],function(){" + buildView + parses.script + ";nt.commit();flushChildren();});";
 		} else {
-			moduleString += "" + buildView + parses.script + ";nt.commit();";
+			moduleString += "" + buildView + parses.script + ";nt.commit();flushChildren();";
 		}
-
-		moduleString += "return title;";
 	}
 
-	return new Function("ice", "moduleNode", "VNode", "NodeTransaction", "require", "signCurrentRender", moduleString);
+	return {
+		updateFn: new Function("ice", "moduleNode", "VNode", "NodeTransaction", "require", "signCurrentRender", "flushChildren", moduleString),
+		title: title
+	};
 }
 
 /**
@@ -8269,28 +8274,19 @@ var http = {
 	//    },
 };
 
-function loopFlush(structure) {
+/**
+	compareArgs ( newArgs: Array, originalArgs: Array )
 
-	var title = void 0,
-	    _title = void 0;
-	foreach(structure, function (route) {
-		if (route.updateFn) {
-			_title = route.updateFn();
+	Return Type:
+	Boolean
+	参数是否有改变
 
-			title = title || _title;
+	Description:
+	对比新旧参数数组中是否存在改变的参数，有则返回true，没有则返回false
 
-			delete route.updateFn;
-		}
-
-		if (type$1(route.children) === "array") {
-			_title = loopFlush(route.children);
-			title = title || _title;
-		}
-	});
-
-	return title;
-}
-
+	URL doc:
+	http://icejs.org/######
+*/
 function compareArgs(newArgs, originalArgs) {
 	var len = Object.keys(newArgs).length;
 
@@ -8340,6 +8336,9 @@ function ModuleLoader(nextStructure, param, get, post) {
 	// 加载错误时会将错误信息保存在此
 	this.moduleError = null;
 
+	// 当前跳转的标题
+	this.title = "";
+
 	// 已使用的模块节点数组
 	// 防止多层使用相同模块名时，子模块获取到的是父模块的模块节点
 	this.usedModuleNodes = [];
@@ -8386,6 +8385,28 @@ extend(ModuleLoader.prototype, {
 		// 如果等待队列已空则立即刷新模块
 		if (isEmpty(this.waiting)) {
 			this.flush();
+		}
+	},
+
+
+	/**
+ 	update ( title: String )
+ 
+ 	Return Type:
+ 	void
+ 
+ 	Description:
+ 	更新标题
+ 	标题按模块从上到下，从外到内的顺序遍历获取第一个有标题的模块进行更新
+ 
+ 	URL doc:
+ 	http://icejs.org/######
+ */
+	updateTitle: function updateTitle(title) {
+		if (!this.title) {
+			document.title = title;
+
+			this.title = title;
 		}
 	},
 
@@ -8510,15 +8531,13 @@ extend(ModuleLoader.prototype, {
 			// 根据更新后的页面结构体渲染新视图
 			Structure.currentPage.update(location.nextStructure).render(location, nextStructureBackup);
 		} else {
-			var
 
-			// 正常加载，将调用模块更新函数更新模块
-			title = loopFlush(this.nextStructure.entity);
-
-			// 更新页面title
-			if (title && document.title !== title) {
-				document.title = title;
-			}
+			foreach(this.nextStructure.entity, function (structure) {
+				if (structure.updateFn) {
+					structure.updateFn();
+					delete structure.updateFn;
+				}
+			});
 		}
 	}
 });
@@ -8554,9 +8573,9 @@ extend(ModuleLoader, {
 		if (path === null) {
 			currentStructure.updateFn = function () {
 				moduleNode = type$1(moduleNode) === "function" ? moduleNode() : moduleNode;
-				var diffBackup = moduleNode.clone ();
-				moduleNode.clear ();
-				moduleNode.diff ( diffBackup ).patch ();
+				var diffBackup = moduleNode.clone();
+				moduleNode.clear();
+				moduleNode.diff(diffBackup).patch();
 			};
 
 			return;
@@ -8570,7 +8589,22 @@ extend(ModuleLoader, {
 		path += configuration.getConfigure("moduleSuffix") + args;
 
 		var moduleConfig = configuration.getConfigure("module"),
-		    historyModule = cache.getModule(path);
+		    historyModule = cache.getModule(path),
+		    signCurrentRender = function signCurrentRender() {
+			Structure.signCurrentRender(currentStructure, param, args, data);
+		},
+		    flushChildren = function flushChildren(route) {
+			return function () {
+				if (type$1(route.children) === "array") {
+					foreach(route.children, function (child) {
+						if (child.updateFn) {
+							child.updateFn();
+							delete child.updateFn;
+						}
+					});
+				}
+			};
+		};
 
 		// 给模块元素添加编号属性，此编号有两个作用：
 		// 1、用于模块加载时的模块识别
@@ -8588,6 +8622,7 @@ extend(ModuleLoader, {
 		// 并且缓存未过期
 		// cache已有当前模块的缓存时，才使用缓存
 		if ((!method || method.toUpperCase() !== "POST") && historyModule && (moduleConfig.expired === 0 || historyModule.time + moduleConfig.expired > timestamp())) {
+			this.updateTitle(historyModule.title);
 			currentStructure.updateFn = function () {
 				moduleNode = type$1(moduleNode) === "function" ? moduleNode() : moduleNode;
 				if (!moduleNode.attr(identifierName)) {
@@ -8596,11 +8631,8 @@ extend(ModuleLoader, {
 					// 调用render将添加的ice-identifier同步到实际node上
 					moduleNode.render();
 				}
-				var title = historyModule.updateFn(ice, moduleNode, VNode, NodeTransaction, require, function () {
-					Structure.signCurrentRender(currentStructure, param, args, data);
-				});
 
-				return title;
+				historyModule.updateFn(ice, moduleNode, VNode, NodeTransaction, require, signCurrentRender, flushChildren(this));
 			};
 
 			// 获取模块更新函数完成后在等待队列中移除
@@ -8629,7 +8661,11 @@ extend(ModuleLoader, {
 				/////////////////////////////////////////////////////////
 				// 编译module为可执行函数
 				// 将请求的html替换到module模块中
-				var updateFn = compileModule(moduleString, moduleIdentifier);
+				var _compileModule = compileModule(moduleString, moduleIdentifier),
+				    updateFn = _compileModule.updateFn,
+				    title = _compileModule.title;
+
+				_this2.updateTitle(title);
 
 				currentStructure.updateFn = function () {
 					moduleNode = type$1(moduleNode) === "function" ? moduleNode() : moduleNode;
@@ -8637,6 +8673,7 @@ extend(ModuleLoader, {
 					// 满足缓存条件时缓存模块更新函数
 					if (moduleConfig.cache === true && moduleNode.cache !== false) {
 						cache.pushModule(path, {
+							title: title,
 							updateFn: updateFn,
 							time: timestamp(),
 							moduleIdentifier: moduleIdentifier
@@ -8650,14 +8687,10 @@ extend(ModuleLoader, {
 						moduleNode.render();
 					}
 
-					var title = updateFn(ice, moduleNode, VNode, NodeTransaction, require, function () {
-						Structure.signCurrentRender(currentStructure, param, args, data);
-					});
+					updateFn(ice, moduleNode, VNode, NodeTransaction, require, signCurrentRender, flushChildren(this));
 
 					// 调用success回调
 					success(moduleNode);
-
-					return title;
 				};
 
 				// 获取模块更新函数完成后在等待队列中移除
