@@ -1,0 +1,30 @@
+<!-- DOM javascript动画 -->
+<div id="app">
+    <!-- duration属性：显式定义元素被隐藏前的动画持续时间，单位为ms -->
+    <!--  -->
+    <timeline-motion 
+        duration="2000" 
+        :onstart="startMotion" 
+        :onend=""
+        
+    >
+        <div>javascript motion</div>
+        <div>javascript motion</div>
+    </timeline-motion>
+</div>
+
+
+<script>
+    // javascript
+    new am.Module (document.querySelector("#root"), {
+        init () {
+            return {
+                startMotion (el, done) {
+                    el.style.width = 1;
+                    Velocity(el, { width: 100 }, { complete: done });
+                },
+                
+            }
+        }
+    });
+</script>

@@ -1,0 +1,42 @@
+<!-- DOM css3动画 -->
+<div id="root">
+
+
+    <!-- name属性：name为字符串时，可直接定义css类[name]-from、[name]-active、[name]-to来控制动画 -->
+    <!-- from、active、to表示元素显示时的顺序，但元素隐藏时的顺序为to、active、from -->
+    <timeline-motion name="staticString">
+        <div>static string css motion</div>
+    </timeline-motion>
+
+
+    <!-- name属性：name为vm值时，可实时改变此vm值来切换不同的动画 -->
+    <timeline-motion name="{{ motionName }}">
+        <div>vm string css motion</div>
+    </timeline-motion>
+
+
+    <!-- name属性：name也可设置为对象，可通过此对象自定义[name]-from、[name]-active、[name]-to的类名 -->
+    <timeline-motion name="{{ {
+        from: 'enter',
+        active: 'transition-def',
+        to: 'to'
+    } }}">
+        <div>static string css motion</div>
+    </timeline-motion>
+
+
+    <!-- name属性：name也可分别自定义enter、leave的[name]-from、[name]-active、[name]-to类名 -->
+    <timeline-motion name="{{ {
+        enter: {
+            from: 'enter',
+            active: 'transition-def',
+            to: 'to'
+        },
+        leave: {
+            from: 'enter',
+            active: 'transition-def',
+            to: 'to'
+    } }}">
+        <div>static string css motion</div>
+    </timeline-motion>
+</div>
