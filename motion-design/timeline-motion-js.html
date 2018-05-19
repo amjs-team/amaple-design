@@ -1,14 +1,31 @@
 <!-- DOM javascript动画 -->
 <div id="app">
-    <!-- duration属性：显式定义元素被隐藏前的动画持续时间，单位为ms -->
-    <!--  -->
-    <timeline-motion 
-        duration="2000" 
-        :onstart="startMotion" 
-        :onend=""
-        
-    >
+    <!-- duration属性：显式定义元素被隐藏前的动画持续时间，如果设置了此属性，则会优先以此属性的值为持续值，单位为ms -->
+    <!-- custom-name属性：custom-name的对象值中通过定义from、to为对象，active为函数来实现js动画，可使用任何第三方js动画库 -->
+    <!-- 其中from和to分别为显示时的起始和结束样式值，隐藏时的结束和起始样式值，amaple会在动画执行前将起始样式值首先设置到DOM上，将结束样式传入active内的第三个参数（dest），开发者可通过此参数自行做目标样式的过渡动画 -->
+    <timeline-motion duration="2000" custom-name="{{ singleAnim }}">
         <div>javascript motion</div>
+        <div>javascript motion</div>
+    </timeline-motion>
+
+    <!-- custom-name属性：custom-name的对象值的from、to也可设置一个包含多段动画对象的数组来实现多段动画，如下： -->
+    <timeline-motion custom-name="{{ multipleAnim }}">
+        <div>javascript motion</div>
+        <div>javascript motion</div>
+    </timeline-motion>
+
+    <!-- custom-name属性：custom-name的对象值中也可分别设置进入和离开的动画，如下： -->
+    <timeline-motion custom-name="{{ enterAndLeaveAnim }}">
+        <div>javascript motion</div>
+    </timeline-motion>
+
+    <!-- appear属性：appear属性值也可指定一个包含from、active和to的动画单独设置js动画 -->
+    <timeline-motion appear="{{ singleAnim }}">
+        <div>javascript motion</div>
+    </timeline-motion>
+
+    <!-- :onstart、:onend分别为动画的开始和结束的事件 -->
+    <timeline-motion :onstart="startMotion" :onend="endMotion">
         <div>javascript motion</div>
     </timeline-motion>
 </div>
@@ -16,14 +33,71 @@
 
 <script>
     // javascript
-    new am.Module (document.querySelector("#root"), {
+    new am.Module (document.querySelector("#app"), {
         init () {
             return {
-                startMotion (el, done) {
-                    el.style.width = 1;
-                    Velocity(el, { width: 100 }, { complete: done });
+                startMotion () {
+                    console.log ("animate start");
                 },
-                
+                endMotion () {
+                    console.log ("animate end");
+                },
+
+                // 单段动画的设置
+                // 此动画同时过渡opacity和width
+                singleAnim: {
+                    from: {
+                        opacity: 0,
+                        width: 0
+                    },
+                    active (el, done, dest) {
+                        Velocity(el, dest, { complete: done });
+                    },
+                    to: {
+                        opacity: 1,
+                        width: 100
+                    }
+                },
+
+                // 多段动画的设置
+                // 此动画会先过渡opacity，结束后再过渡width
+                multipleAnim: {
+                    from: [
+                        {opacity: 0},
+                        {width: 0}
+                    ],
+                    active (el, done, dest) {
+                        dest.forEach ((item, i, _dest) => {
+                            Velocity(el, item, {
+                                complete: i === _dest.length - 1 ? done : function () {}
+                            });
+                        });
+                    },
+                    to: [
+                        {opacity: 1},
+                        {width: 100}
+                    ]
+                },
+
+                // 分别设置进入和离开的动画
+                // 此时enter、leave中的from、to都表示起始值和结束值，没有逆向反转的情况
+                // 当然你也可以将进入动画设置为js动画，将离开动画设置为css动画
+                enterAndLeaveAnim: {
+                    enter: {
+                        from: {opacity: 0},
+                        active (el, done, dest) {
+                            Velocity(el, dest, { complete: done });
+                        },
+                        to: {opacity: 1}
+                    },
+                    leave: {
+                        from: {width: 0},
+                        active (el, done, dest) {
+                            Velocity(el, dest, { complete: done });
+                        },
+                        to: {width: 1}
+                    }
+                }
             }
         }
     });

@@ -3,7 +3,7 @@
 
 
     <!-- name属性：name为字符串时，可直接定义css类[name]-from、[name]-active、[name]-to来控制动画 -->
-    <!-- from、active、to表示元素显示时的顺序，但元素隐藏时的顺序为to、active、from -->
+    <!-- from、active、to表示元素进入时的顺序，但元素离开时的顺序会变为为to、active、from（逆向反转） -->
     <timeline-motion name="staticString">
         <div>static string css motion</div>
     </timeline-motion>
@@ -15,8 +15,10 @@
     </timeline-motion>
 
 
-    <!-- name属性：name也可设置为对象，可通过此对象自定义[name]-from、[name]-active、[name]-to的类名 -->
-    <timeline-motion name="{{ {
+    <!-- custom-name属性：custom-name属性可改变name属性设置的固定式类名，它为一个object，可通过此对象的from、active和to设置字符串自定义[name]-from、[name]-active、[name]-to的类名 -->
+    <!-- 这对于复用相同类，使用第三方css动画（如animated）很有用 -->
+    <!-- 当custom-name设置了对于属性，amaple会优先使用自定义的类名 -->
+    <timeline-motion custom-name="{{ {
         from: 'enter',
         active: 'transition-def',
         to: 'to'
@@ -25,8 +27,8 @@
     </timeline-motion>
 
 
-    <!-- name属性：name也可分别自定义enter、leave的[name]-from、[name]-active、[name]-to类名 -->
-    <timeline-motion name="{{ {
+    <!-- custom-name属性：custom-name也可分别自定义enter、leave的[name]-from、[name]-active、[name]-to类名 -->
+    <timeline-motion custom-name="{{ {
         enter: {
             from: 'enter',
             active: 'transition-def',
@@ -36,6 +38,20 @@
             from: 'enter',
             active: 'transition-def',
             to: 'to'
+    } }}">
+        <div>static string css motion</div>
+    </timeline-motion>
+
+    <!-- appear属性：增加appear属性但未设置值时DOM初始化显示会执行一次name属性或custom-name设置的动画 -->
+    <timeline-motion appear>
+        <div>static string css motion</div>
+    </timeline-motion>
+
+    <!-- appear属性值也可指定一个包含from、active、to的对象单独设置初始化动画 -->
+    <timeline-motion appear="{{ {
+        from: 'appear-from',
+        from: 'appear-active',
+        from: 'appear-to',
     } }}">
         <div>static string css motion</div>
     </timeline-motion>

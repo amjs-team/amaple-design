@@ -1,0 +1,42 @@
+<div id="app">
+    <drag-motion :ondrag="update" :onstart="startMotion" :onend="endMotion">
+        <div>Drag motion</div>
+    </drag-motion>
+</div>
+
+<script>
+    new am.Module (document.querySelector("#app"), {
+        init () {
+            return {
+
+                // el：当前拖动的DOM
+                // options：移动相关的参数对象，对象属性如下：
+                //  altKey：触发对应事件前是否按下alt键
+                //  ctrlKey：触发对应事件前是否按下ctrl键
+                //  shiftKey：触发对应事件前是否按下shift键
+                //  event：原生的MouseEvent对象
+                startMotion (el, { altKey, ctrlKey, shiftKey, event }) {
+
+                },
+
+                // options：拖动过程中增加的移动相关参数，如下：
+                //  moveX：相对上一次触发此移动事件，X轴移动的距离，单位为px
+                //  moveY：相对上一次触发此移动事件，Y轴移动的距离，单位为px
+                //  totalX：相对触发onstart事件，X轴移动的距离，单位为px
+                //  totalY：相对触发onstart事件，Y轴移动的距离，单位为px
+                update (el, { moveX, moveY, totalX, totalY, altKey, ctrlKey, shiftKey, event }) {
+                    el.style.left = el.offsetLeft + moveX + "px";
+                    el.style.top = el.offsetTop + moveY + "px";
+                },
+
+                // options：拖动结束事件增加的移动相关参数，如下：
+                //  unitXTime：根据最后一次触发ondrag事件到触发onend事件X轴移动的位置作为参考，移动100px所需消耗的毫秒数
+                //  unitYTime：根据最后一次触发ondrag事件到触发onend事件Y轴移动的位置作为参考，移动100px所需消耗的毫秒数
+                // unitXTime和unitYTime一般用于在拖动结束后，在自动过渡到开始或结束状态时的过渡时间参考
+                endMotion (el, { moveX, moveY, totalX, totalY, unitXTime, unitYtime, altKey, ctrlKey, shiftKey, event }) {
+
+                }
+            }
+        }
+    });
+</script>
