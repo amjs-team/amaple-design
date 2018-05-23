@@ -41,6 +41,7 @@
     } }}">
         <div>static string css motion</div>
     </timeline-motion>
+    
 
     <!-- appear属性：增加appear属性但未设置值时DOM初始化显示会执行一次name属性或custom-name设置的动画 -->
     <timeline-motion appear>
@@ -50,8 +51,8 @@
     <!-- appear属性值也可指定一个包含from、active、to的对象单独设置初始化动画 -->
     <timeline-motion appear="{{ {
         from: 'appear-from',
-        from: 'appear-active',
-        from: 'appear-to',
+        active: 'appear-active',
+        to: 'appear-to',
     } }}">
         <div>static string css motion</div>
     </timeline-motion>

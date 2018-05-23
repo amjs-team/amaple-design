@@ -1,0 +1,43 @@
+<!-- Amaple module动画，以css动画为例 -->
+<style>
+    .fade-from {
+        opacity: 0;
+    }
+    .fade-active {
+        transition: opacity 0;
+    }
+    .fade-to {
+        opacity: 0;
+    }
+</style>
+<div id="app">
+    
+    <!-- 不带:key值的module，amaple会认为只有一个module node，更新module时会使用虚拟DOM的形式替换module node中的内容 -->
+    <!-- 此时无法执行两个module node同时存在的动画，而只能执行例如先隐藏后显示的动画，amaple会在module node隐藏后执行替换操作，然后再执行显示动画 -->
+    <timeline-motion name="fade">
+        <div :module="anim-module"></div>
+    </timeline-motion>
+
+
+    <!-- 带:key值的module，amaple会认为有多个module node，更新module时会将新内容填充到第二个module node中， -->
+    <!-- 此时可以执行两个module node同时存在的动画，amaple会在第二个module node的显示执行完后替换掉第一个module node -->
+    <!-- 设置局部属性， -->
+    <!-- :onupdate(暂定名)：当viewmodel的值改变后，触发dom更新前将会执行:onupdate事件，开发者可自行通过此事件控制触发dom何时执行更新操作 -->
+    <timeline-motion name="fade" :onupdate="actionDomChange">
+        <div :module="anim-module" :key="{{  }}"></div>
+    </timeline-motion>
+</div>
+
+
+<script>
+    // javascript
+    new am.Module (document.querySelector("#app"), {
+        init () {
+            return {
+                actionDomChange (prevFn, nextFn) {
+
+                }
+            };
+        }
+    });
+</script>

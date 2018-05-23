@@ -11,11 +11,9 @@
 
                 // el：当前拖动的DOM
                 // options：移动相关的参数对象，对象属性如下：
-                //  altKey：触发对应事件前是否按下alt键
-                //  ctrlKey：触发对应事件前是否按下ctrl键
-                //  shiftKey：触发对应事件前是否按下shift键
-                //  event：原生的MouseEvent对象
-                startMotion (el, { altKey, ctrlKey, shiftKey, event }) {
+                // keyCode：键盘按下的键值，与event的keyCode对应
+                // event：原生的MouseEvent对象
+                startMotion (el, { keyCode, event }) {
 
                 },
 
@@ -24,7 +22,9 @@
                 //  moveY：相对上一次触发此移动事件，Y轴移动的距离，单位为px
                 //  totalX：相对触发onstart事件，X轴移动的距离，单位为px
                 //  totalY：相对触发onstart事件，Y轴移动的距离，单位为px
-                update (el, { moveX, moveY, totalX, totalY, altKey, ctrlKey, shiftKey, event }) {
+                /////////////////////////////
+                //  如果是以handleUpdate触发的调用，则没有event参数
+                update (el, { moveX, moveY, totalX, totalY, keyCode, event }) {
                     el.style.left = el.offsetLeft + moveX + "px";
                     el.style.top = el.offsetTop + moveY + "px";
                 },
@@ -32,9 +32,12 @@
                 // options：拖动结束事件增加的移动相关参数，如下：
                 // unitXTime：根据最后一次触发ondrag事件到触发onend事件X轴移动的位置作为参考，移动100px所需消耗的毫秒数
                 // unitYTime：根据最后一次触发ondrag事件到触发onend事件Y轴移动的位置作为参考，移动100px所需消耗的毫秒数
-                // lastXRate和lastYRate一般用于在拖动结束后，最后一帧的速率，即在最后一帧拖动的距离，这一般用于判断是否继续执行动画到终点还是回到起点，也可以用于在拖动结束后的惯性过渡起始速度
-                endMotion (el, { moveX, moveY, totalX, totalY, lastXRate, lastYRate, altKey, ctrlKey, shiftKey, event }) {
-
+                // lastMoveX和lastMoveY为拖动结束后最后一帧的移动的距离，这一般用于判断是否继续执行动画到终点还是回到起点，也可以用于在拖动结束后的惯性过渡起始速度
+                // handleUpdate：可用于在结束拖动后，继续以一定轨迹执行update函数，每调用一次则相当于调用update一次，所以它一般是以setTimeout或requestAnimationFrame循环调用。参数为每一帧移动的X/Y轴速，相对于update函数中的moveX，moveY。
+                endMotion (el, { moveX, moveY, totalX, totalY, lastMoveX, lastMoveY, keyCode, event }, handleUpdate) {
+                    setTimeout (() => {
+                        handleUpdate (lastMoveX, lastMoveY);
+                    }, 30);
                 }
             }
         }
