@@ -30,10 +30,10 @@
                 },
 
                 // options：拖动结束事件增加的移动相关参数，如下：
-                //  unitXTime：根据最后一次触发ondrag事件到触发onend事件X轴移动的位置作为参考，移动100px所需消耗的毫秒数
-                //  unitYTime：根据最后一次触发ondrag事件到触发onend事件Y轴移动的位置作为参考，移动100px所需消耗的毫秒数
-                // unitXTime和unitYTime一般用于在拖动结束后，在自动过渡到开始或结束状态时的过渡时间参考
-                endMotion (el, { moveX, moveY, totalX, totalY, unitXTime, unitYtime, altKey, ctrlKey, shiftKey, event }) {
+                // unitXTime：根据最后一次触发ondrag事件到触发onend事件X轴移动的位置作为参考，移动100px所需消耗的毫秒数
+                // unitYTime：根据最后一次触发ondrag事件到触发onend事件Y轴移动的位置作为参考，移动100px所需消耗的毫秒数
+                // lastXRate和lastYRate一般用于在拖动结束后，最后一帧的速率，即在最后一帧拖动的距离，这一般用于判断是否继续执行动画到终点还是回到起点，也可以用于在拖动结束后的惯性过渡起始速度
+                endMotion (el, { moveX, moveY, totalX, totalY, lastXRate, lastYRate, altKey, ctrlKey, shiftKey, event }) {
 
                 }
             }
