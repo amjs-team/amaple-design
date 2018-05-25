@@ -22,9 +22,10 @@
     <!-- 带:key值的module，amaple会认为有多个module node，更新module时会将新内容填充到第二个module node中， -->
     <!-- 此时可以执行两个module node同时存在的动画，amaple会在第二个module node的显示执行完后替换掉第一个module node -->
     <!-- 设置局部属性， -->
-    <!-- :onupdate(暂定名)：当viewmodel的值改变后，触发dom更新前将会执行:onupdate事件，开发者可自行通过此事件控制触发dom何时执行更新操作 -->
-    <timeline-motion name="fade" :onupdate="actionDomChange">
-        <div :module="anim-module" :key="{{  }}"></div>
+    <!-- :onreact：当viewmodel的值改变后，触发dom更新前将会执行:onreact事件，开发者可自行通过此事件控制触发dom何时执行更新操作 -->
+    <!-- scoped(暂定名)：动画状态值，当。。。 -->
+    <timeline-motion name="fade" :onreact="actionDOMChange" scoped="status">
+        <div :module="anim-module" :key="fade-{{ status }}"></div>
     </timeline-motion>
 </div>
 
@@ -34,7 +35,8 @@
     new am.Module (document.querySelector("#app"), {
         init () {
             return {
-                actionDomChange (prevFn, nextFn) {
+                moduleKey: "",
+                actionDOMChange (prevFn, nextFn) {
 
                 }
             };

@@ -35,6 +35,9 @@
                 // lastMoveX和lastMoveY为拖动结束后最后一帧的移动的距离，这一般用于判断是否继续执行动画到终点还是回到起点，也可以用于在拖动结束后的惯性过渡起始速度
                 // handleUpdate：可用于在结束拖动后，继续以一定轨迹执行update函数，每调用一次则相当于调用update一次，所以它一般是以setTimeout或requestAnimationFrame循环调用。参数为每一帧移动的X/Y轴速，相对于update函数中的moveX，moveY。
                 endMotion (el, { moveX, moveY, totalX, totalY, lastMoveX, lastMoveY, keyCode, event }, handleUpdate) {
+
+                    // 继续以每30毫秒的频率调用update函数
+                    // 也可用第三方带有状态动画的库进行调用
                     setTimeout (() => {
                         handleUpdate (lastMoveX, lastMoveY);
                     }, 30);

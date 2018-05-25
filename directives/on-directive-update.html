@@ -1,2 +1,28 @@
 <!-- 更新:on指令 -->
-<!-- 更新为：当指令内为方法名时，使用此方法作为触发函数，除此之外的将会以javascript语句执行 -->
+<!-- 修改:on指令为只能传入一个触发函数，否则将会报错 -->
+<!-- 当指令内为方法名时，仍使用state中对应的方法作为触发函数 -->
+<!-- 其中handleClick中的this还是指向this.state对象 -->
+<button :onclick="handleClick">Button</button>
+
+<!-- 当指令内不为方法名时，必须为一个函数定义，函数接收event参数 -->
+<!-- 不管是普通函数，还是箭头函数，其this都指向this.state对象 -->
+<button :onclick="event => handleClick (event)">Button2</button>
+<button :onclick="function (event) {
+    handleClick (event);
+}">Button2</button>
+
+
+<script>
+    new am.Module ({
+        init () {
+            return {
+                handleClick (e) {
+                    // this指向this.state
+                },
+                todos: () => {
+                    // this指向外部init方法的this，即当前Module对象
+                }
+            }
+        }
+    });
+</script>

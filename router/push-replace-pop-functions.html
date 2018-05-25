@@ -1,0 +1,15 @@
+<!-- 在模块中调用跳转函数 -->
+<script>
+    new am.Module ({
+        init (router) {
+            return {
+                navigateTo () {
+                    router.push ();
+                }
+            }
+        }
+    });
+</script>
+<!-- 在组件中调用跳转函数 -->
+
+<!-- 使用push、replace和pop时的非param、query参数传递 -->
