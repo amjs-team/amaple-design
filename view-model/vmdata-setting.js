@@ -27,14 +27,6 @@ new am.Module ({
                         this.value = obj.value;
                     })
                     .start ();
-                },
-            
-                // 用于双向绑定的状态值追踪
-                // 当counter以双向绑定的形式传入到某组件，且该组件对counter做了修改，则此函数将会触发
-                listen: function (component) {
-            
-                    // TODOS
-                    console.log (component.name);
                 }
             }
         }

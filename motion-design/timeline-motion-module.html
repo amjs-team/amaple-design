@@ -10,36 +10,84 @@
         opacity: 0;
     }
 </style>
-<div id="app">
-    
-    <!-- 不带:key值的module，amaple会认为只有一个module node，更新module时会使用虚拟DOM的形式替换module node中的内容 -->
-    <!-- 此时无法执行两个module node同时存在的动画，而只能执行例如先隐藏后显示的动画，amaple会在module node隐藏后执行替换操作，然后再执行显示动画 -->
+<div>
     <timeline-motion name="fade">
         <div :module="anim-module"></div>
     </timeline-motion>
 
 
-    <!-- 带:key值的module，amaple会认为有多个module node，更新module时会将新内容填充到第二个module node中， -->
-    <!-- 此时可以执行两个module node同时存在的动画，amaple会在第二个module node的显示执行完后替换掉第一个module node -->
-    <!-- 设置局部属性， -->
-    <!-- :onreact：当viewmodel的值改变后，触发dom更新前将会执行:onreact事件，开发者可自行通过此事件控制触发dom何时执行更新操作 -->
-    <!-- scoped(暂定名)：动画状态值，当。。。 -->
-    <timeline-motion name="fade" :onreact="actionDOMChange" scoped="status">
-        <div :module="anim-module" :key="fade-{{ status }}"></div>
+    <!-- 当timeline-motion组件作用到module node时，在没有设置:key的时候amaple在更新模块时会保留原来的dom结构，然后会将新内容填充到第二个module node中，等到动画结束时再隐藏第一个module node -->
+    <!-- 这也是为了保留跳转前的模块，否则无法实现页面保留的功能 -->
+    <!-- 此时可以执行两个module node同时存在的动画 -->
+    <!-- 如果这最外层的<timeline-motion>组件是专门用于通知内部观察者角色的话，可直接设置duration而不设置name属性，此时最外层会在duration设置的时间后执行onreact(如果有设置的话)替换新旧dom -->
+    <timeline-motion name="{{ motionName }}" :onstart="startMotion" notify="{{ observer }}" duration="{{ duration }}">
+        <div :module="anim-module"></div>
     </timeline-motion>
 </div>
 
 
 <script>
     // javascript
-    new am.Module (document.querySelector("#app"), {
-        init () {
-            return {
-                moduleKey: "",
-                actionDOMChange (prevFn, nextFn) {
+    new am.Module ({
 
+        // navigator为Router提供的控制器对象，它可用于获取
+        init (navigator) {
+            return {
+                motionName: "",
+                observer: "transform",
+                duration: "",
+                startMotion (motion) {
+
+                    // 根据页面跳转的形式来决定使用哪种动画
+                    switch (navigator.state) {
+                        case "push":
+                            this.motionName = "fade-push";
+                            break;
+                        case "pop":
+                            this.motionName = "fade-pop";
+                            break;
+                        case "replace":
+                            this.motionName = "fade-replace";
+                            break;
+                    }
+
+                    // 还可以根据跳转的页面url来决定notify的对象，duration的时间等
+                    switch (window.location.pathname) {
+                        case "/module.html":
+                            this.observer = "module-transform";
+                            this.duration = [2000, 4000];
+                            break;
+                        case "/ui.html":
+                            this.observer = "ui-transform";
+                            this.duration = 3000;
+                            break;
+                        default:
+                            this.observer = "common-transform";
+                            this.duration = 2000;
+                    }
+
+                    motion.onreact = (enterFn, leaveFn) => {
+                        // 执行完进入动画后再执行离开动画
+                        enterFn (leaveFn);
+                    };
                 }
             };
         }
     });
 </script>
+
+<!-- =========================== -->
+<!-- module-anim模块内的一个模块内容 -->
+<!-- 模块内元素可设置模块跳转的触发 -->
+<!-- =========================== -->
+<template :title="Motion Title">
+    <timeline-motion 
+        observer 
+        name="transform"
+    >
+        <div>Anim Content One</div>
+    </timeline-motion>
+    <timeline-motion>
+
+    </timeline-motion>
+</template>

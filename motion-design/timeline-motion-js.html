@@ -7,6 +7,14 @@
         <div>javascript motion</div>
     </timeline-motion>
 
+    <!-- duration属性：也可设置一个object来单独设置进入和离开的持续时间 -->
+    <timeline-motion duration="{{ {
+        enter: 2000,
+        leave: 3000
+    } }}" custom-name="{{ singleAnim }}">
+        <div>javascript motion</div>
+    </timeline-motion>
+
     <!-- custom-name属性：custom-name的对象值的from、to也可设置一个包含多段动画对象的数组来实现多段动画，如下： -->
     <!-- 如果<timeline-motion>中有多个元素且未使用:if指令，则它们会同时执行相同动画 -->
     <timeline-motion custom-name="{{ multipleAnim }}">
@@ -23,7 +31,8 @@
         <div>javascript motion</div>
     </timeline-motion>
 
-    <!-- :onstart、:onend分别为动画的开始和结束的事件 -->
+    <!-- :onstart：此事件会在执行动画前一帧执行，在此事件中可设置动画执行的顺序 -->
+    <!-- :onend：此事件为动画结束时执行回调 -->
     <timeline-motion :onstart="startMotion" :onend="endMotion">
         <div>javascript motion</div>
     </timeline-motion>
@@ -36,21 +45,16 @@
 
     <!-- 如果<timeline-motion>中多个元素使用了:if、:else-if或:else指令，则会分别执行显示和隐藏的动画 -->
     <!-- 如果动画元素的:key指令没有设置不同值时，默认会先执行隐藏动画后执行显示动画 -->
-    <timeline-motion custom-name="{{ multipleAnim }}" :onreact="actionDOMChange">
+    <timeline-motion custom-name="{{ multipleAnim }}" :onstart="startMotion">
         <div :if="show" :key="conditionIf">Condition if</div>
         <div :else :key="conditionElse">Condition else</div>
     </timeline-motion>
 
     <!-- 也可以直接将内部条件定义到:key中，效果和上面相同 -->
-    <timeline-motion custom-name="{{ multipleAnim }}" :onreact="actionDOMChange">
+    <timeline-motion custom-name="{{ multipleAnim }}" :onstart="startMotion">
         <div :key="{{ show }}">{{ show ? "Condition if" : "Condition else" }}</div>
     </timeline-motion>
-
-    <timeline-motion custom-name="{{ multipleAnim }}" :onreact="actionDOMChange">
-        <div :module :key="{{ moduleKey }}"></div>
-    </timeline-motion>
 </div>
-
 
 <script>
     // javascript
@@ -58,10 +62,19 @@
         init () {
             return {
                 show: true,
-                startMotion () {
-                    console.log ("animate start");
+
+                // 设置动画的顺序
+                // 调用enterFn时将执行进入动画，参数为动画执行完成后的回调
+                // 调用leaveFn时将执行离开动画，参数为动画执行完成后的回调
+                // 当motion.onreact未设置时，未设置不同:key默认执行先离开后进入的动画，设置了不同:key时同时执行进入离开动画
+                // 当motion.onreact设置为函数时，必须手动调用enterFn和leaveFn函数，否则将不会更新界面dom
+                startMotion (motion) {
+                    motion.onreact = (enterFn, leaveFn) => {
+                        // 执行完进入动画后再执行离开动画
+                        enterFn (leaveFn);
+                    };
                 },
-                endMotion () {
+                endMotion (motion) {
                     console.log ("animate end");
                 },
 
@@ -119,10 +132,6 @@
                         },
                         to: {width: 1}
                     }
-                },
-                
-                actionDOMChange (enterFn, leaveFn) {
-                    
                 }
             }
         }

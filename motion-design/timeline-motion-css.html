@@ -17,7 +17,7 @@
 
     <!-- custom-name属性：custom-name属性可改变name属性设置的固定式类名，它为一个object，可通过此对象的from、active和to设置字符串自定义[name]-from、[name]-active、[name]-to的类名 -->
     <!-- 这对于复用相同类，使用第三方css动画（如animated）很有用 -->
-    <!-- 当custom-name设置了对于属性，amaple会优先使用自定义的类名 -->
+    <!-- 当custom-name设置了对于属性，amaple会优先使用自定义的类名，这也是为什么要另外设定一个'custom-name'的原因，这是为了让'custom-name'和'name'同时起作用，当'custom-name'没有设定对应类名时，amaple会使用name中设定的值 -->
     <timeline-motion custom-name="{{ {
         from: 'enter',
         active: 'transition-def',
@@ -57,3 +57,13 @@
         <div>static string css motion</div>
     </timeline-motion>
 </div>
+
+<script>
+    new am.Module ({
+        init () {
+            return {
+                motionName: "fade"
+            };
+        }
+    })
+</script>

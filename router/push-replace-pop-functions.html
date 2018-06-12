@@ -1,15 +1,54 @@
-<!-- 在模块中调用跳转函数 -->
-<script>
-    new am.Module ({
-        init (router) {
-            return {
-                navigateTo () {
-                    router.push ();
-                }
+// 在模块中调用跳转函数
+new am.Module ({
+    init (navigator) {
+        return {
+
+            // push、replace、pop函数的第二个参数可传递任意类型的参数
+            // 对应模块可通过this.data获取传递的参数，但在...
+            navigateTo (url) {
+                navigator.push (url, {
+                    arg1: 0,
+                    arg2: 1,
+                    arg3: 2
+                });
+            },
+            redirectTo (url) {
+                navigator.replace (url, {
+                    arg1: 0,
+                    arg2: 1,
+                    arg3: 2
+                });
+            },
+            backTo (url) {
+
+                // navigator.pop (delta? Number, data?: Any)
+                // delta：可选参数，表示返回的层数，如果delta大于现有页面数则返回到第一个页面，默认为1
+                // data：可选参数，跳转后可通过this.data获取到
+                navigator.pop (2, {
+                    arg1: 0,
+                    arg2: 1,
+                    arg3: 2
+                });
             }
         }
-    });
-</script>
-<!-- 在组件中调用跳转函数 -->
+    }
+});
 
-<!-- 使用push、replace和pop时的非param、query参数传递 -->
+
+// 在组件中调用跳转函数
+// 组件中的生命周期也可以像Module一样，通过控制器名称直接获取控制器对象
+// Amaple组件的定位是拥有特定功能的封装块，就像由一堆代码封装成的具有特定功能的纯函数（对传入的参数无副作用、不干扰主业务）一样，所以我们不推荐在Amaple组件内进行操作主业务逻辑
+// 但确实需要操作，则可使用以下方式
+const Comp = am.class ("Comp").extends (am.Component) ({
+    init (navigator) {
+        return {
+            navigator: {
+                observe: 0,
+                value: navigator
+            }
+        };
+    },
+    redirectTo (url) {
+        this.state.navigator.push (url);
+    }
+});
