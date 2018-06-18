@@ -16,10 +16,13 @@
     </timeline-motion>
 
 
-    <!-- 当timeline-motion组件作用到module node时，在没有设置:key的时候amaple在更新模块时会保留原来的dom结构，然后会将新内容填充到第二个module node中，等到动画结束时再隐藏第一个module node -->
+    <!-- 当<timeline-motion>组件作用到module node时，在没有设置:key的时候amaple在更新模块时会保留原来的dom结构，然后会将新内容填充到第二个module node中，等到动画结束时再隐藏第一个module node -->
     <!-- 这也是为了保留跳转前的模块，否则无法实现页面保留的功能 -->
     <!-- 此时可以执行两个module node同时存在的动画 -->
-    <!-- 如果这最外层的<timeline-motion>组件是专门用于通知内部观察者角色的话，可直接设置duration而不设置name属性，此时最外层会在duration设置的时间后执行onreact(如果有设置的话)替换新旧dom -->
+    <!-- <timeline-motion>的角色： -->
+    <!-- ①观察者：通过observer属性设定一个<timeline-motion>组件为观察者角色，此时它将接受来自父<timeline-motion>组件的通知实现触发动画的效果，observer可设置观察者名称，此时只接受制定名称的通知者的触发，观察者同时也可以是一个通知者 -->
+    <!-- ①通知者：组件默认的角色为通知者，可通知它的子孙<timeline-motion>观察者组件触发动画，当需要指定特定的观察者触发动画时，可设置notify为观察者名称来指定 -->
+    <!-- 如果在最外层的<timeline-motion>组件是专门用于通知内部观察者角色的话，可直接设置duration而不设置name属性，此时最外层会在duration设置的时间后执行onreact(如果有设置的话)替换新旧dom -->
     <timeline-motion name="{{ motionName }}" :onstart="startMotion" notify="{{ observer }}" duration="{{ duration }}">
         <div :module="anim-module"></div>
     </timeline-motion>
@@ -91,3 +94,20 @@
 
     </timeline-motion>
 </template>
+
+<script>
+    new am.Module ( {
+        init () {
+            return {
+                transform: "anim-trans";
+            };
+        },
+
+        // 当此模块的渲染已保存在内存中并再跳转到此模块时，routerTurned(暂定名)被调用
+        routerTurned ( navigator ) {
+
+            // 表示当此模块的渲染已经存在于内存中时，不触发跳转的过渡动画
+            this.state.transform = "";
+        }
+    } );
+</script>

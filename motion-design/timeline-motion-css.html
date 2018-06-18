@@ -2,7 +2,7 @@
 <div id="root">
 
 
-    <!-- name属性：name为字符串时，可直接定义css类[name]-from、[name]-active、[name]-to来控制动画 -->
+    <!-- name属性：name为字符串时，可直接定义css类[name]-from、[name]-active、[name]-to来控制动画，当name的值为""/false/undefined/null/0等代表false的值时，<timeline-motion>组件将不会触发添加类到对应DOM上的动作 -->
     <!-- from、active、to表示元素进入时的顺序，但元素离开时的顺序会变为为to、active、from（逆向反转） -->
     <timeline-motion name="staticString">
         <div>static string css motion</div>

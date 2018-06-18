@@ -5,30 +5,50 @@ new am.Module ({
 
             // push、replace、pop函数的第二个参数可传递任意类型的参数
             // 对应模块可通过this.data获取传递的参数，但在...
-            navigateTo (url) {
-                navigator.push (url, {
-                    arg1: 0,
-                    arg2: 1,
-                    arg3: 2
-                });
-            },
-            redirectTo (url) {
-                navigator.replace (url, {
-                    arg1: 0,
-                    arg2: 1,
-                    arg3: 2
-                });
-            },
-            backTo (url) {
+            navigateTo ( path ) {
+                navigator.push ( {
+                    path,
+                    query: {},
+                    data: {
+                        arg1: 0,
+                        arg2: 1,
+                        arg3: 2
+                    }
+                } );
 
-                // navigator.pop (delta? Number, data?: Any)
-                // delta：可选参数，表示返回的层数，如果delta大于现有页面数则返回到第一个页面，默认为1
-                // data：可选参数，跳转后可通过this.data获取到
-                navigator.pop (2, {
-                    arg1: 0,
-                    arg2: 1,
-                    arg3: 2
-                });
+                // 也可以直接navigator.push ( url )这样单独传入一个字符串跳转，query也可直接加到path后面，这在没有data时很有用
+            },
+            redirectTo ( path ) {
+                navigator.replace ( {
+                    path,
+                    query: {},
+                    data: {
+                        arg1: 0,
+                        arg2: 1,
+                        arg3: 2
+                    }
+                } );
+
+                // 也可以直接navigator.replace ( url )这样单独传入一个字符串跳转，query也可直接加到path后面，这在没有data时很有用
+            },
+            backTo ( delta ) {
+
+                // navigator.pop ( delta: Number|Object )
+                // delta：当传入数字时表示返回的层数，如果delta大于现有页面数则返回到第一个页面，默认为1。当传入对象时此对象可带有delta、data属性
+                // data参数在跳转后的模块中可通过this.data获取到，它相比于params、query参数是一次性的参数，往往用于在跳转到的模块需要做特殊表现，如：
+                // 1. 跳转到登录界面，登录成功后做出不同的操作
+                // 2. 保存数据返回到上一个界面时，需刷新数据以显示最新保存的数据
+                // 3. 操作成功跳转回上一个页面，并显示操作成功
+                navigator.pop ( {
+                    delta: 2, 
+                    data: {
+                        arg1: 0,
+                        arg2: 1,
+                        arg3: 2
+                    }
+                } );
+
+                // 也可以直接navigator.pop ( delta )这样单独传入一个数字直接表示返回的层数，这在没有data时很有用
             }
         }
     }
