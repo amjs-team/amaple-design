@@ -5,7 +5,8 @@
 <button :onclick="handleClick">Button</button>
 
 <!-- 当指令内不为方法名时，必须为一个函数定义，函数接收event参数 -->
-<!-- 不管是普通函数，还是箭头函数，其this都指向this.state对象 -->
+<!-- 函数内的取值范围为this.state -->
+<!-- 不管是普通函数，还是箭头函数，其this都指向当前的Module对象 -->
 <button :onclick="event => handleClick (event)">Button2</button>
 <button :onclick="function (event) {
     handleClick (event);

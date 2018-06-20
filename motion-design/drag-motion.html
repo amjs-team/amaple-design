@@ -8,6 +8,7 @@
     <!-- 与原生dom事件捕获一样，<drag-motion>拖动源的也会向下传递（拖动源捕获） -->
     <!-- notify：表示此<drag-motion>为通知者，当不设置身份时默认为通知者，当通知者被用户拖动而执行动画时，它的子孙<drag-motion>观察者将会同时执行拖拽动画 -->
     <!-- 通知者只会通知相同名字的观察者，此处notify/observer为空值，也表示名字相同，你也可以为它们分别设置不同的notify、observer名字来区分它们 -->
+    <!-- 作用到多个元素上时（包括:for循环渲染的列表）上时，此时将分别为它们单独设置拖拽动画，每个元素都可以单独被拖动 -->
     <drag-motion notify :ondrag="update" :onstart="startMotion" :onend="endMotion">
         <div>
 
@@ -24,6 +25,17 @@
             </drag-motion>
         </div>
     </drag-motion>
+
+    <!-- 作用到Component上时，直接拖动此Component，不过每个Component内的元素都有一个根元素 -->
+    <drag-motion
+        :ondrag="update" 
+        :onstart="startMotion" 
+        :onend="endMotion"
+    >
+        <custom-comp></custom-comp>
+    </drag-motion>
+
+    <!-- 不可作用到<template>元素上 -->
 </div>
 
 <script>

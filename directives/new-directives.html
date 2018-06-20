@@ -1,10 +1,51 @@
 <!-- 动静态指令规则 -->
 <!-- 动态指令使用“:”表示 -->
-<!-- 静态指令使用“@”表示 -->
+<!-- 静态指令使用“@”表示，静态变量可使用插值表达式动态绑定 -->
+<div @module @key="{{ keyStatus }}">
+    <input type="text" :model="userName">
+    <span>{{ userName }}</span>
+</div>
 
+<!-- ====== -->
 <!-- 新增指令 -->
-<!-- :skip(暂定名)忽略挂载指令和插值表达式的指令 -->
+<!-- :directive，用于为一个元素动态添加指令，一般在组件内动态绑定指令到元素时使用 -->
+<!-- 1. 传入一个对象，指令名作为key值（不需加":"或"@"），value为指令值 -->
+<div :directive="directiveObject"></div>
+<!-- 2. 传入一个函数时，需返回包含指令名key（不需加":"或"@"），指令值value的对象 -->
+<div :directive="() => this.directiveFunc ( 'onclick' )"></div>
 
-<!-- key静态指令，用于区分不同key -->
+<!-- @ignore(暂定名)，忽略对应元素及其子元素挂载指令和插值表达式，这可以在确定不需要挂载，或需显示插值表达式时使用，也有利于提高效率 -->
+<div @ignore class="{{ visible this content }}">
+    <span>{{ 直接显示出此处的内容 }}</span>
+</div>
 
-<!-- 静态指令新增使用插值表达式动态差值 -->
+<!-- @key静态指令，用于区分不同key -->
+<div @key="{{ show }}">
+    <span>{{ show ? "show" : "hide" }}</span>
+</div>
+
+
+<script>
+    new am.Module ( {
+        init () {
+            return {
+                directiveObject: {
+                    key: "{{ keyStatus }}",
+
+                    // 定义值为函数时，this指向module.state，与绑定普通状态函数相同
+                    onclick (event) {
+                        // TODOS
+                    }
+                },
+                directiveFunc (eventName) {
+                    return {
+                        [eventName] (event) {
+                            // TODOS
+                        }
+                    }
+                },
+                show: true
+            };
+        }
+    } );
+</script>
