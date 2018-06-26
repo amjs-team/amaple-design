@@ -1,0 +1,57 @@
+<div id="app">
+
+    <!-- src：帧动画的图片地址，此图片包含多个横向排列的帧图像 -->
+    <!-- size：每帧图像尺寸，单位可设置为px/em/rem等css可识别的单位，图像尺寸只能统一设置 -->
+    <!-- number：图像帧数，用于FrameMotion执行动画的执行帧数，没有设置帧数则不会执行动画 -->
+    <!-- column：帧动画图像默认为横向排列，当帧数太多时可能导致图像太长，此时将图像分为多行排列并设置column告知FrameMotion每行的图像数（即图像的列数） -->
+    <!-- :onstart：开始执行帧动画时触发 -->
+    <!-- :onend：帧动画执行完毕后触发 -->
+    <!-- :on -->
+    <!-- appear：是否在渲染时就执行此帧动画 -->
+    <frame-motion 
+        src="https://img.amaple.org/loading.png" 
+        size="40px*40px" 
+        number="10"
+        column="6"
+        :onstart="startMotion"
+        :onend="endMotion"
+        :onclick="start"
+        appear 
+    />
+</div>
+
+<script>
+    new am.Module (document.querySelector ("#app"), {
+        init () {
+            return {
+                startMotion () {
+                    console.log ("start");
+                },
+                endMotion () {
+                    console.log ("end");
+                },
+                start (thisFrameObj) {
+                    const currentIndex = thisFrameObj.getCurrent ();
+
+                    // getCurrent函数获取当前显示的帧索引
+                    if (currentIndex <= 0) {
+
+                        /**
+                         * @desc forward函数为正向执行帧动画
+                         * @param start: Number 表示从哪帧开始执行动画
+                         */
+                        thisFrameObj.forward ( currentIndex );
+                    }
+                    else {
+
+                        /**
+                         * @desc reverse函数为反向执行帧动画
+                         * @param start: Number 表示从哪帧开始执行动画
+                         */
+                        thisFrameObj.reverse ( currentIndex );
+                    }
+                }
+            };
+        }
+    });
+</script>

@@ -4,7 +4,7 @@ new am.Module ({
         return {
 
             // push、replace、pop函数的第二个参数可传递任意类型的参数
-            // 对应模块可通过this.data获取传递的参数，但在...
+            // 对应模块可通过this.data获取传递的参数，但需要注意的是刷新页面后this.data数据不会保留，所以需要做好判断防止出错
             navigateTo ( path ) {
                 navigator.push ( {
                     path,

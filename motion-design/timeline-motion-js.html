@@ -8,10 +8,12 @@
     </timeline-motion>
 
     <!-- duration属性：也可设置一个object来单独设置进入和离开的持续时间 -->
-    <timeline-motion duration="{{ {
-        enter: 2000,
-        leave: 3000
-    } }}" custom-name="{{ singleAnim }}">
+    <timeline-motion duration="{{
+        {
+            enter: 2000,
+            leave: 3000
+        }
+    }}" custom-name="{{ singleAnim }}">
         <div>javascript motion</div>
     </timeline-motion>
 
@@ -54,6 +56,10 @@
     <timeline-motion custom-name="{{ multipleAnim }}" :onstart="startMotion">
         <div :key="{{ show }}">{{ show ? "Condition if" : "Condition else" }}</div>
     </timeline-motion>
+
+    <!-- 作用到Component上时 -->
+    <!-- 作用到<template>元素上时 -->
+    <!-- 作用到:for循环的列表上时 -->
 </div>
 
 <script>
@@ -81,56 +87,65 @@
                 // 单段动画的设置
                 // 此动画同时过渡opacity和width
                 singleAnim: {
-                    from: {
-                        opacity: 0,
-                        width: 0
-                    },
-                    active (el, done, dest) {
-                        Velocity(el, dest, { complete: done });
-                    },
-                    to: {
-                        opacity: 1,
-                        width: 100
+                    observe: 0,
+                    value: {
+                        from: {
+                            opacity: 0,
+                            width: 0
+                        },
+                        active (el, done, dest) {
+                            Velocity(el, dest, { complete: done });
+                        },
+                        to: {
+                            opacity: 1,
+                            width: 100
+                        }
                     }
                 },
 
                 // 多段动画的设置
                 // 此动画会先过渡opacity，结束后再过渡width
                 multipleAnim: {
-                    from: [
-                        {opacity: 0},
-                        {width: 0}
-                    ],
-                    active (el, done, dest) {
-                        dest.forEach ((item, i, _dest) => {
-                            Velocity(el, item, {
-                                complete: i === _dest.length - 1 ? done : function () {}
+                    observe: 0,
+                    value: {
+                        from: [
+                            {opacity: 0},
+                            {width: 0}
+                        ],
+                        active (el, done, dest) {
+                            dest.forEach ((item, i, _dest) => {
+                                Velocity(el, item, {
+                                    complete: i === _dest.length - 1 ? done : function () {}
+                                });
                             });
-                        });
-                    },
-                    to: [
-                        {opacity: 1},
-                        {width: 100}
-                    ]
+                        },
+                        to: [
+                            {opacity: 1},
+                            {width: 100}
+                        ]
+                    }
                 },
 
                 // 分别设置进入和离开的动画
                 // 此时enter、leave中的from、to都表示起始值和结束值，没有逆向反转的情况
                 // 当然你也可以将进入动画设置为js动画，将离开动画设置为css动画
                 enterAndLeaveAnim: {
-                    enter: {
-                        from: {opacity: 0},
-                        active (el, done, dest) {
-                            Velocity(el, dest, { complete: done });
+                    observe: 0,
+                    value: {
+                        enter: {
+                            from: {opacity: 0},
+                            active (el, done, dest) {
+                                Velocity(el, dest, { complete: done });
+                            },
+                            to: {opacity: 1}
                         },
-                        to: {opacity: 1}
-                    },
-                    leave: {
-                        from: {width: 0},
-                        active (el, done, dest) {
-                            Velocity(el, dest, { complete: done });
-                        },
-                        to: {width: 1}
+                        leave: {
+                            from: {width: 0},
+                            active (el, done, dest) {
+                                Velocity(el, dest, { complete: done });
+                            },
+                            to: {width: 1}
+                        }
                     }
                 }
             }

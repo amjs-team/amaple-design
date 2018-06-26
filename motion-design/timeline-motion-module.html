@@ -34,6 +34,8 @@
     new am.Module ({
 
         // navigator为Router提供的控制器对象，它可用于获取
+        // 1. navigator.state：跳转状态（push/pop/replace）
+        // 2. navigator.pathname：当前相对地址pathname，与window.location.pathname相比，它可以获取在hash模式下的pathname
         init (navigator) {
             return {
                 motionName: "",
@@ -55,7 +57,7 @@
                     }
 
                     // 还可以根据跳转的页面url来决定notify的对象，duration的时间等
-                    switch (window.location.pathname) {
+                    switch (navigator.pathname) {
                         case "/module.html":
                             this.observer = "module-transform";
                             this.duration = [2000, 4000];
@@ -99,7 +101,7 @@
     new am.Module ( {
         init () {
             return {
-                transform: "anim-trans";
+                transform: "anim-trans"
             };
         },
 
