@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://unpkg.com/amaple"></script>
+    <script src="https://unpkg.com/amaple-compiler"></script>
+
+    <!-- Header -->
+    <script type="text/amaple" src="./header.html"></script>
+
+    <!-- App -->
+    <script type="text/amaple" src="./app.html"></script>
+
+    <!-- Footer -->
+    <script type="text/amaple" src="./footer.html"></script>
+</head>
+<body>
+    <!-- 预加载模块的写法 -->
+    <!-- 配置router时，支持使用router.route("/", App)，其中App为一个模块 -->
+
+    <div @module="header"></div>
+    <div @module></div>
+    <div @module="footer"></div>
+</body>
+<script>
+    am.startRouter ( {
+        routes ( router ) {
+            router.module ("header").route ("/", Header);
+            router.module ().route ("/", App);
+            router.module ("footer").route ("/", Footer);
+        }
+    } );
+</script>
+</html>

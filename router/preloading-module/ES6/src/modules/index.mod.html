@@ -1,0 +1,29 @@
+<module @title="Document Title">
+    <template>
+        <div class="wrap">
+            <am-buttom :onclick="btnClick"></am-buttom>
+        </div>
+    </template>
+    
+    <script>
+        import { Module } from "amaple";
+        import AmButton from "../components/am-button.comp.html";
+        
+        const App = new Module ( {
+            init () {
+                return {
+                    btnClick () {
+                        // TODOS
+                    }
+                }
+            }
+        } );
+        export default App;
+    </script>
+
+    <style scoped>
+        .wrap {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</module>

@@ -21,7 +21,7 @@
                     // this指向this.state
                 },
                 todos: () => {
-                    // this指向外部init方法的this，即当前Module对象
+                    // 不管是普通函数还是箭头函数，this始终指向外部init方法的this，即当前Module对象
                 }
             }
         }

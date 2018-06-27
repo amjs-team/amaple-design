@@ -1,0 +1,23 @@
+<component>
+    <template>
+        <div :directive="{{ directives }}">{{ btnText }}</div>
+    </template>
+
+    <script>
+        import { Component } from "amaple";
+
+        export default class AmButton extends Component {
+            init () {
+                return {
+                    btnText: "Hello Amaple"
+                };
+            }
+            loading () {
+                // TODOS
+            }
+            finish () {
+                // TODOS
+            }
+        }
+    </script>
+</component>

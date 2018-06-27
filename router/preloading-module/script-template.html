@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://unpkg.com/amaple"></script>
+
+    <!-- Header模块 -->
+    <script id="header" type="text/amaple">
+        <div class="wrap">Header</div>
+    </script>
+    <style id="header" scoped>
+        .wrap {
+            font-size: 20px;
+        }
+    </style>
+
+    <!-- App模块 -->
+    <script id="app" type="text/amaple">
+        <div class="wrap">App</div>
+    </script>
+    <style id="app" scoped>
+        .wrap {
+            font-size: 16px;
+        }
+    </style>
+
+    <!-- Footer模块 -->
+    <script id="footer" type="text/amaple">
+        <div class="wrap">Footer</div>
+    </script>
+    <style id="footer" scoped>
+        .wrap {
+            font-size: 18px;
+        }
+    </style>
+
+
+    <script>
+        // 此JavaScript也可以放到外部文件，再在此引入
+        const 
+            Header = new am.Module ( {
+                init () {},
+                render () {
+                    this.template ("#header").style ("#header");
+                }
+            } ),
+            App = new am.Module ( {
+                init () {},
+                render () {
+                    this.template ("#app").style ("#app");
+                }
+            } ),
+            Footer = new am.Module ( {
+                init () {},
+                render () {
+                    this.template ("#footer").style ("#footer");
+                }
+            } );
+    </script>
+</head>
+<body>
+    
+    <!-- 预加载模块的写法 -->
+    <!-- 配置router时，支持使用router.route("/", App)，其中App为一个模块 -->
+    <div @module="header"></div>
+    <div @module></div>
+    <div @module="footer"></div>
+</body>
+<script>
+    am.startRouter ( {
+        routes ( router ) {
+            router.module ("header").route ("/", Header);
+            router.module ().route ("/", App);
+            router.module ("footer").route ("/", Footer);
+        }
+    } );
+</script>
+</html>
