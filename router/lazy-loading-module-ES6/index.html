@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 预加载模块的写法 -->
+    <!-- 配置router时，支持使用router.route("/", App)，其中App为一个模块 -->
+
+    <!-- 打包模式下：组件预加载可直接使用import关键字引入 -->
+    <!-- 预加载的模块和组件都需要使用打包工具打包 -->
+    <div @module="header"></div>
+    <div @module></div>
+    <div @module="footer"></div>
+</body>
+<script src="./dist/bundle.1.2.4.min.js"></script>
+</html>

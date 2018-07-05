@@ -1,4 +1,4 @@
-// 将module中的组件都定义为Component类型（像Java一样），如“Component comp = import ('Comp')”，这样的好处是可识别组件衍生类，对后面使用形如Component.inject的方式注入预定义的props有好处，Component.inject可让一个页面中多个有相同props的相同组件得到重用，而不用每个地方使用时都单独传入相同的props.
+// Component.inject可让一个页面中多个有相同props的相同组件得到重用，而不用每个地方使用时都单独传入相同的props.
 const TimelineMotion = import ("./Component");
 const FadeTimelineMotion = am.inject (TimelineMotion, {
     name: "fade",
