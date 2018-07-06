@@ -53,8 +53,6 @@ am.startRouter ({
         url: "/module-preload",
 
         // 非必要属性，没有设置此属性时首屏加载完毕后将不会预加载任何模块
-        strategy (routerConfig) {
-            return !!routerConfig;
-        }
+        strategy: routerConfig => !!routerConfig
     }
 });

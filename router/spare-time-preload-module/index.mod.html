@@ -32,12 +32,13 @@
                 // 再链式调用preload时将会接收第二个isMatch参数，它表示当前传入的路由配置是否被路径数组匹配
                 // 以下就是预加载所有被"/about/setting"、"/api/setting"两个路径匹配的模块
                 // amaple会自动去重，所以开发者不必担心模块重复请求等问题
-                navigator.matchRoutes ([
+                navigator.preload (navigator.matchRoutes ([
                     "/about/setting",
-                    "/api/setting",
-                ]).preload ((routerConfig, isMatch) => isMatch);
+                    "/api/setting"
+                ]), 
+                (routerConfig, isMatch) => isMatch);
             },
-
+            
             // ...
         })
     </script>

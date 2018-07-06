@@ -83,7 +83,8 @@
         },
         actionAnim (index) {
             const animObject = this.refs ("animRef");
-
+            
+            // 手动触发动画行为
             // TimelineMotion组件的isEntered可获取指定索引的元素是否为已进入的状态
             // 只有在调用TimelineMotion.prototype.enter函数后，指定元素的isEntered为true
             if (!animObject.isEntered (index)) {
