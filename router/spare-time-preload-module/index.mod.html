@@ -18,25 +18,27 @@
                 navigator.preload (routerConfig => !!routerConfig.modulePath.match (/about\.mod|api\.mod/));
 
                 // ============================
-                // 场景2：开发者需根据不同的模块请求url单独请求此模块的预加载模块
-                // 也可在此函数中传入带url属性的Object单独设置统一请求模块，此时不管am.startRouter()的配置文件中是否设置了url，amaple都只会再发出此url的模块预加载请求；
+                // 场景2：开发者需根据不同于路由配置中的preloadURL，需单独请求其他预加载url
+                // 也可在此函数中传入带url属性的Object单独设置统一请求模块，此时不管am.startRouter()的配置文件中是否设置了preloadURL，amaple都只会发出此url的模块预加载请求；
                 // 在此Object中，url和strategy都是必须的属性参数。
                 navigator.preload ({
-                    url: "/preload/index",
+                    url: "/preload/other",
                     strategy: routerConfig => !!routerConfig.modulePath.match (/about\.mod|api\.mod/)
                 });
 
                 // ============================
                 // 场景3：开发者需根据一个或多个url来确定加载的模块
-                // 此时需首先调用matchRoutes函数并传入一个路径数组
-                // 再链式调用preload时将会接收第二个isMatch参数，它表示当前传入的路由配置是否被路径数组匹配
+                // 此时需首先调用matchRoutes函数并传入一个路径字符串，多个路径时传入路径字符串数组
+                // 再在strategy函数中，接收第二个isMatch参数，它表示当前传入的路由配置是否被路径数组匹配
                 // 以下就是预加载所有被"/about/setting"、"/api/setting"两个路径匹配的模块
                 // amaple会自动去重，所以开发者不必担心模块重复请求等问题
-                navigator.preload (navigator.matchRoutes ([
-                    "/about/setting",
-                    "/api/setting"
-                ]), 
-                (routerConfig, isMatch) => isMatch);
+                navigator.preload ({
+                    match: navigator.matchRoutes ([
+                        "/about/setting",
+                        "/api/setting"
+                    ]),
+                    strategy: (routerConfig, isMatch) => isMatch
+                });
             },
             
             // ...
