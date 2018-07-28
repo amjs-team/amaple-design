@@ -1,7 +1,4 @@
-<!-- 动静态指令规则 -->
-<!-- 动态指令使用“:”表示 -->
-<!-- 静态指令使用“@”表示，静态变量可使用插值表达式动态绑定 -->
-<div @module @key="{{ keyStatus }}">
+<div @module :key="keyStatus">
     <input type="text" :model="userName">
     <span>{{ userName }}</span>
 </div>
@@ -20,7 +17,7 @@
 </div>
 
 <!-- @key静态指令，用于区分不同key -->
-<div @key="{{ show }}">
+<div :key="show">
     <span>{{ show ? "show" : "hide" }}</span>
 </div>
 

@@ -13,8 +13,10 @@ new am.Module ({
      * [Promise对象]异步控制路由跳转，此时需将返回参数传入resolve函数中，可在此做数据预加载等延迟性的跳转动作
      * [其他]继续原来的模块渲染
      */
-    enter (navigatr) {
-        return false;
+    enter (navigator) {
+        if (navigator.isPopState) {
+            return false;
+        }
     },
 
     /**
@@ -33,5 +35,13 @@ new am.Module ({
         return new Promise(resolve => {
             setTimeout(() => resolve("/category"), 500);
         });
+    },
+
+    /**
+     * routerTurned(controllerName1: String, controllerName2: String, ...)
+     * 当此模块的渲染已保存在内存中并再跳转到此模块时，routerTurned(暂定名)被调用
+     */
+    routerTurned () {
+        // TODOS
     }
 });
