@@ -1,0 +1,34 @@
+<module>
+    <template>
+        <h1>{{ commonData.title }}</h1>
+        <div>{{ header.text }}</div>
+        <button :onclick="updateText"></button>
+    </template>
+
+    <script>
+        import { Module, Inject, Mutate } from "amaple";
+        import commonStore from "./common.store.js";
+        
+        @Inject({ commonStore })
+        export default new Module({
+            init () {
+                // TODOS
+            },
+            mounted () {
+                fetch("index.php").then(
+
+                    // 异步请求中，如果回调函数中有修改state，则需要用@Mutate注解以跟踪状态
+                    @Mutate
+                    res => this.commonStore.text = res.text;
+                )
+            },
+            updateText () {
+                this.commonStore.text = "New Header";
+            }
+        });
+    </script>
+
+    <style>
+        /* Styles */
+    </style>
+</module>

@@ -1,0 +1,37 @@
+<component>
+    <template>
+        <button :for="item in list" :onclick="click">{{ item }}</button>
+    </template>
+
+    <script>
+
+        // store
+        class ChildStore extends am.Store {
+            constructor () {
+                this.state = {
+                    list: ["a", "b", "c"]
+                };
+                
+                this.auth({
+                    list: [Child]
+                })
+            }
+        }
+
+        // component
+        @am.Inject({ childStore: ChildStore })
+        export default class Child extends am.Component {
+            init () {
+                this.propsType({
+                    text: String
+                });
+            }
+            mounted () {
+                // TODOS
+            }
+            click () {
+                this.childStore.state.list.push(this.props.text);
+            }
+        }
+    </script>
+</component>

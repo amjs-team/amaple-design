@@ -1,0 +1,16 @@
+<module>
+    <template>
+        <child text="{{ childIndexStore.childText }}"></child>
+    </template>
+
+    <script>
+        import { Module, Inject } from "amaple";
+        import Child from "../../../components/Child.comp.html";
+        import childIndexStore from "./childIndex.store";
+
+        @Inject({ childIndexStore })
+        export default new Module({
+            depComponent: [Child]
+        });
+    </script>
+</module>

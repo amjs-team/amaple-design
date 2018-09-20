@@ -1,0 +1,18 @@
+<module>
+    <template>
+        <h1>{{ storeInstance.commonData.title }}</h1>
+        <div>{{ storeInstance.footer.text }}</div>
+    </template>
+
+    <script>
+        import { Module, Inject } from "amaple";
+        import storeInstance from "./common.store.js";
+        
+        @Inject({ storeInstance })
+        export default new Module();
+    </script>
+
+    <style>
+        /* Styles */
+    </style>
+</module>

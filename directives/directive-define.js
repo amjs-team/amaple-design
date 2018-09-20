@@ -21,6 +21,8 @@ export default {
 
     // 第二个参数将接受init中返回的值
     update({ node, attr, tmpl, scoped }, extObj) {
-        console.log (extObj.firstKey, extObj.secondKey);
+        
+        // TODOS
+        // ...
     }
 }

@@ -1,0 +1,29 @@
+<module>
+    <template>
+        <div>
+            <label>用户名</label>
+            <input type="text" :model="username" />
+        </div>
+        <div>
+            <label>密码</label>
+            <input type="password" :model="password" />
+        </div>
+        <child text="{{ store.state.plusFive }}"></child>
+    </template>
+
+    <script>
+        import { Module, Inject } from "amaple";
+        import IndexStore from "./index.store";
+        import Child from "../../components/Child.comp.html";
+        
+        const store = new IndexStore();
+        @Inject(store)
+        new Module(document.getElementById("#app"), {
+            depComponent: [Child]
+        });
+    </script>
+
+    <style>
+        /* Styles */
+    </style>
+</module>

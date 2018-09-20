@@ -1,0 +1,26 @@
+<module>
+    <template>
+        <div>
+            <label>用户名</label>
+            <input type="text" :model="userInfo.username" />
+        </div>
+        <div>
+            <label>密码</label>
+            <input type="password" :model="userInfo.password" />
+        </div>
+        <div @module></div>
+    </template>
+
+    <script>
+        import { Module, Inject } from "amaple";
+        import IndexStore from "./index.store.js";
+        
+        const store = new IndexStore();
+        @Inject(store)
+        export default new Module();
+    </script>
+
+    <style>
+        /* Styles */
+    </style>
+</module>

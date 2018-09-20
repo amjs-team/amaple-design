@@ -1,0 +1,25 @@
+<module>
+    <template>
+        <div>
+            <label>用户名</label>
+            <input type="text" :model="username" />
+        </div>
+        <div>
+            <label>密码</label>
+            <input type="password" :model="password" />
+        </div>
+        <child text="{{ store.state.plusFive }}"></child>
+    </template>
+
+    <script>
+        const store = new IndexStore();
+        @am.Inject(store)
+        const indexModule = new Module(document.getElementById("#app"), {
+            depComponent: [Child]
+        });
+    </script>
+
+    <style>
+        /* Styles */
+    </style>
+</module>
